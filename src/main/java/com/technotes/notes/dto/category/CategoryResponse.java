@@ -1,48 +1,20 @@
-package com.technotes.notes.document;
-
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
+package com.technotes.notes.dto.category;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "categories")
-@CompoundIndex(
-        name = "uk_category_parent_slug",
-        def = "{'parentId': 1, 'slug': 1}",
-        unique = true
-)
-public class CategoryDocument {
+public class CategoryResponse {
 
-   @Id
     private String id;
-
     private String name;
-
-
     private String slug;
-
-    @Indexed
     private String parentId;
-
-    private List<String> ancestorIds = new ArrayList<>();
-
+    private List<String> ancestorIds;
     private int level;
-
     private boolean active;
-
     private int sortOrder;
-
-    @Version
     private Long version;
-
     private Instant createdAt;
-
     private Instant updatedAt;
 
     public String getId() {

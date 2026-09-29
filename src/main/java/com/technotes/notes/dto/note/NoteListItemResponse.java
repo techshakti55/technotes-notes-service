@@ -1,55 +1,22 @@
-package com.technotes.notes.document;
+package com.technotes.notes.dto.note;
 
-import com.technotes.notes.enums.ContentKind;
 import com.technotes.notes.enums.NoteStatus;
 import com.technotes.notes.enums.Visibility;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "notes")
-public class NoteDocument {
+public class NoteListItemResponse {
 
-    @Id
     private String id;
-
     private String title;
-
-    @Indexed(unique = true)
     private String slug;
-
     private String summary;
-
-    private String contentMarkdown;
-
-    @Indexed
     private String primaryCategoryId;
-
-    private List<String> tags = new ArrayList<>();
-
-    private ContentKind contentKind;
-
-    @Indexed
-    private String authorId;
-
-    @Indexed
+    private List<String> tags;
     private NoteStatus status;
-
-    @Indexed
     private Visibility visibility;
-
-    @Version
     private Long version;
-
-    private String publishedRevisionId;
-
-    private Instant createdAt;
-
     private Instant updatedAt;
 
     public String getId() {
@@ -84,14 +51,6 @@ public class NoteDocument {
         this.summary = summary;
     }
 
-    public String getContentMarkdown() {
-        return contentMarkdown;
-    }
-
-    public void setContentMarkdown(String contentMarkdown) {
-        this.contentMarkdown = contentMarkdown;
-    }
-
     public String getPrimaryCategoryId() {
         return primaryCategoryId;
     }
@@ -106,22 +65,6 @@ public class NoteDocument {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
-    }
-
-    public ContentKind getContentKind() {
-        return contentKind;
-    }
-
-    public void setContentKind(ContentKind contentKind) {
-        this.contentKind = contentKind;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
     }
 
     public NoteStatus getStatus() {
@@ -148,26 +91,11 @@ public class NoteDocument {
         this.version = version;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Instant getUpdatedAt() {
         return updatedAt;
     }
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-    }
-    public String getPublishedRevisionId() {
-        return publishedRevisionId;
-    }
-
-    public void setPublishedRevisionId(String publishedRevisionId) {
-        this.publishedRevisionId = publishedRevisionId;
     }
 }

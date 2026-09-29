@@ -1,55 +1,27 @@
-package com.technotes.notes.document;
+package com.technotes.notes.dto.note;
 
 import com.technotes.notes.enums.ContentKind;
 import com.technotes.notes.enums.NoteStatus;
 import com.technotes.notes.enums.Visibility;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "notes")
-public class NoteDocument {
+public class NoteResponse {
 
-    @Id
     private String id;
-
     private String title;
-
-    @Indexed(unique = true)
     private String slug;
-
     private String summary;
-
     private String contentMarkdown;
-
-    @Indexed
     private String primaryCategoryId;
-
-    private List<String> tags = new ArrayList<>();
-
+    private List<String> tags;
     private ContentKind contentKind;
-
-    @Indexed
     private String authorId;
-
-    @Indexed
     private NoteStatus status;
-
-    @Indexed
     private Visibility visibility;
-
-    @Version
     private Long version;
-
-    private String publishedRevisionId;
-
     private Instant createdAt;
-
     private Instant updatedAt;
 
     public String getId() {
@@ -162,12 +134,5 @@ public class NoteDocument {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-    }
-    public String getPublishedRevisionId() {
-        return publishedRevisionId;
-    }
-
-    public void setPublishedRevisionId(String publishedRevisionId) {
-        this.publishedRevisionId = publishedRevisionId;
     }
 }
