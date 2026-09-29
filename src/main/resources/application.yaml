@@ -1,3 +1,6 @@
 spring:
   application:
     name: technotes-notes-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/technotes_notes}
