@@ -1,0 +1,5 @@
+# Only the Maven project inputs belong in the build context.
+**
+!pom.xml
+!src/
+!src/**
