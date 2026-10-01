@@ -1,13 +1,19 @@
 package com.technotes.notes.dto.note;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.technotes.notes.enums.Visibility;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class CreateNoteRequest {
+
+    private static final int MAX_MARKDOWN_BYTES = 1024 * 1024;
 
     @NotBlank
     @Size(max = 200)
@@ -22,10 +28,26 @@ public class CreateNoteRequest {
     @NotBlank
     private String primaryCategoryId;
 
-    private List<String> tags;
+    @Size(max = 10, message = "must contain at most 10 tags")
+    private List<
+            @NotBlank
+            @Size(max = 40)
+            @Pattern(
+                    regexp = "[a-z0-9]+(?:-[a-z0-9]+)*",
+                    message = "must be a lowercase slug, such as spring-boot"
+            )
+                    String> tags;
 
     @NotNull
     private Visibility visibility;
+
+    @JsonIgnore
+    @AssertTrue(message = "contentMarkdown must not exceed 1 MiB UTF-8")
+    public boolean isMarkdownSizeValid() {
+        return contentMarkdown == null
+                || contentMarkdown.getBytes(StandardCharsets.UTF_8).length
+                <= MAX_MARKDOWN_BYTES;
+    }
 
     public String getTitle() {
         return title;
