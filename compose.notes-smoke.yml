@@ -1,0 +1,55 @@
+# Local Docker Desktop smoke test only; not an AWS production deployment.
+name: technotes-notes-smoke
+services:
+  mongodb:
+    image: mongo:7.0
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--wiredTigerCacheSizeGB", "0.25"]
+    mem_limit: 512m
+    volumes:
+      - smoke-mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok === 1 ? 0 : 1)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  mongo-init:
+    image: mongo:7.0
+    mem_limit: 192m
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./docker/init-smoke-replica.js:/scripts/init-smoke-replica.js:ro
+    entrypoint: ["mongosh", "mongodb://mongodb:27017/?directConnection=true", "--quiet", "/scripts/init-smoke-replica.js"]
+    restart: "no"
+
+  notes:
+    image: technotes-notes:local
+    pull_policy: never
+    platform: linux/amd64
+    mem_limit: 640m
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/technotes_notes_smoke?replicaSet=rs0
+      OAUTH_ISSUER_URI: http://localhost:9000
+      OAUTH_JWK_SET_URI: http://host.docker.internal:9000/oauth2/jwks
+      EUREKA_CLIENT_ENABLED: "false"
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:MaxMetaspaceSize=160m -XX:+ExitOnOutOfMemoryError"
+    ports:
+      - "127.0.0.1:18081:8081"
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+volumes:
+  smoke-mongo:
