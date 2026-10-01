@@ -39,6 +39,7 @@ public class NoteDocument {
 
     @Indexed
     private NoteStatus status;
+    private Instant publishedAt;
 
     @Indexed
     private Visibility visibility;
@@ -169,5 +170,12 @@ public class NoteDocument {
 
     public void setPublishedRevisionId(String publishedRevisionId) {
         this.publishedRevisionId = publishedRevisionId;
+    }
+    public Instant getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(Instant publishedAt) {
+        this.publishedAt = publishedAt;
     }
 }
