@@ -88,7 +88,8 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(error ->
-                        error.getField() + ": "
+                        error.getField()
+                                + ": "
                                 + error.getDefaultMessage()
                 )
                 .collect(Collectors.joining(", "));
@@ -97,6 +98,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_FAILED",
                 message,
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(
+            IllegalArgumentException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST",
+                ex.getMessage(),
                 request.getRequestURI()
         );
     }

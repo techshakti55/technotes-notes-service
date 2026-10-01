@@ -1,6 +1,35 @@
+server:
+  port: ${SERVER_PORT:8081}
+
 spring:
   application:
     name: technotes-notes-service
+
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/technotes_notes}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_ISSUER_URI:http://localhost:9000}
+          jwk-set-uri: ${OAUTH_JWK_SET_URI:http://localhost:9000/oauth2/jwks}
+
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    register-with-eureka: ${EUREKA_REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-details: never
