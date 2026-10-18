@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface NoteRepository
-        extends MongoRepository<NoteDocument, String> {
+        extends MongoRepository<NoteDocument, String>, NoteDraftDeletion {
 
     Optional<NoteDocument> findByIdAndAuthorId(
             String id,
