@@ -7,7 +7,10 @@ import com.technotes.notes.enums.NoteStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,10 +23,13 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// Existing isolated CI MongoDB only; never use a production database.
-@EnabledIfEnvironmentVariable(named = "MONGODB_URI",
-        matches = "mongodb://localhost:25417/technotes_notes_test.*")
+// Dedicated disposable MongoDB; never connects to MONGODB_URI/production.
+@Testcontainers(disabledWithoutDocker = true)
 class NoteDraftDeletionMongoTest {
+
+    @Container
+    static final MongoDBContainer MONGODB =
+            new MongoDBContainer(DockerImageName.parse("mongo:7.0"));
 
     private MongoClient client;
     private MongoTemplate mongo;
@@ -32,7 +38,7 @@ class NoteDraftDeletionMongoTest {
 
     @BeforeEach
     void setup() {
-        client = MongoClients.create(System.getenv("MONGODB_URI"));
+        client = MongoClients.create(MONGODB.getReplicaSetUrl());
         mongo = new MongoTemplate(client, "draft_delete_test_" + UUID.randomUUID().toString().replace("-", ""));
         deletion = new NoteDraftDeletionImpl(mongo);
         NoteDocument note = new NoteDocument();
