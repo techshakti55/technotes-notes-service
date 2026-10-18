@@ -204,4 +204,18 @@ public class NoteController {
                 )
                 .body(response);
     }
+    @DeleteMapping("/{id}")
+    @PreAuthorize(
+            "(hasRole('AUTHOR') or hasRole('ADMIN')) " +
+                    "and hasAuthority('SCOPE_notes.write')"
+    )
+    public ResponseEntity<Void> deleteDraft(
+            @PathVariable String id,
+            @RequestHeader(value = HttpHeaders.IF_MATCH, required = false)
+            String ifMatch) {
+
+        noteService.deleteDraft(id, ifMatch);
+        return ResponseEntity.noContent().build();
+    }
+
 }

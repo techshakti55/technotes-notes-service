@@ -250,6 +250,27 @@ public class NoteService {
         }
     }
 
+    public void deleteDraft(String noteId, String ifMatch) {
+
+        if (ifMatch == null || ifMatch.isBlank()) {
+            throw new MissingIfMatchException("If-Match header is required.");
+        }
+
+        NoteDocument document = getOwnedNote(noteId);
+        validateIfMatch(document, ifMatch);
+        ensureEditable(document);
+
+        // The read above provides the existing API's 404/409/412 responses.
+        // The conditional delete repeats every authorization/state predicate
+        // atomically, so an intervening edit or submission cannot be deleted.
+        if (!noteRepository.deleteOwnedDraftAtVersion(
+                document.getId(), document.getAuthorId(), document.getVersion())) {
+            throw new StaleVersionException(
+                    "The note was modified or deleted by another request."
+            );
+        }
+    }
+
     public NoteResponse submitNote(
             String noteId,
             String ifMatch) {
